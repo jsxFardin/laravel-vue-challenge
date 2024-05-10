@@ -44,6 +44,7 @@ const changePage = (targetPage) => {
 
 const changeFilter = (filter) => {
   queryParams.value = {...queryParams.value, ...filter};
+  queryParams.value.page = 1;
   getTickets();
 };
 </script>
