@@ -1,15 +1,18 @@
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
 import { watch, ref } from "vue";
-import { Link, router} from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useDateUtils } from "@/Utilities/DateUtils";
 
 const props = defineProps({
   tickets: Array,
+  statuses: Array,
+  priorities: Array,
 });
 
 const { formatDateTime } = useDateUtils();
+
 const ticketDataSet = ref([]);
 const queryParams = ref({
   page: route().params.page ?? 1,
@@ -27,11 +30,13 @@ watch(
 );
 
 const getTickets = (targetPage) => {
-    queryParams.value.page = targetPage
-    let url = route(`tickets.index`, queryParams.value);
-    // Inertia.get(url, queryParams.value, {  preserveState: true });
-    router.get(url, queryParams.value, {  preserveState: true });
+  queryParams.value.page = targetPage;
+  let url = route(`tickets.index`, queryParams.value);
+  router.get(url, queryParams.value, { preserveState: true });
 };
+
+const getPriorityName = (priority) => props.priorities[priority];
+const getStatusName = (status) => props.statuses[status];
 </script>
 
 <template>
@@ -108,10 +113,10 @@ const getTickets = (targetPage) => {
               {{ ticket.user.name }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-              {{ ticket.priority }}
+              {{ getPriorityName(ticket.priority) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-              {{ ticket.status }}
+              {{ getStatusName(ticket.status) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
               <Link :href="route('tickets.show', [ticket.id])"> View </Link>

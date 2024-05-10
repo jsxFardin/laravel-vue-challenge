@@ -15,13 +15,17 @@ class TicketsController extends Controller
      */
     public function index()
     {
-
         $tickets = Ticket::with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(config('table.default_per_page'));
 
+        $statuses = TicketStatus::toSelectArray();
+        $priorities = TicketPriority::toSelectArray();
+
         return inertia('Tickets/Index', [
             'tickets' => $tickets,
+            'statuses' => $statuses,
+            'priorities' => $priorities
         ]);
     }
 
