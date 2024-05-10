@@ -5,7 +5,7 @@ export function useDateUtils() {
         return moment(date).format(format);
     }
 
-    function formatDateTime(dateTime, format = 'MM/DD/YYYY HH:mm:ss') {
+    function formatDateTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
         return moment(dateTime).format(format);
     }
 
