@@ -21,21 +21,11 @@ class CreateTicketRequest extends FormRequest
      */
     public function rules(): array
     {
-        $this->checkStatus();
-
         return [
             'title' => 'required',
             'description' => 'required',
             'priority' => 'required',
             'status' => 'required',
         ];
-    }
-
-    protected function checkStatus(): void
-    {
-        if($this->status == 'open') {
-            $this->merge(['priority' => 'medium']);
-        }
-
     }
 }

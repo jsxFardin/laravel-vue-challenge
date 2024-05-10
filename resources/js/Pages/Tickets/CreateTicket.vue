@@ -2,17 +2,10 @@
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-const priorities = {
-    low: 'Low',
-    medium: 'Medium',
-    high: 'High',
-};
-
-const statuses = {
-    open: 'Open',
-    inProgress: 'In Progress',
-    closed: 'Closed',
-};
+const props = defineProps({
+    statuses: Array,
+    priorities: Array,
+});
 
 const form = useForm({
     title: '',
@@ -54,7 +47,7 @@ function submit() {
                                 <label for="priority" class="block text-sm font-medium text-gray-300">Priority</label>
                                 <select id="priority" name="priority" v-model="form.priority"
                                         class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option v-for="(label, priority) in priorities" :value="priority">{{ label }}</option>
+                                    <option v-for="(label, priority) in priorities" :key="priority" :value="priority">{{ label }}</option>
                                 </select>
                                 <p v-if="form.errors.priority" class="text-red-500 text-xs italic">{{ form.errors.priority }}</p>
                             </div>
@@ -63,7 +56,7 @@ function submit() {
                                 <label for="status" class="block text-sm font-medium text-gray-300">Status</label>
                                 <select id="status" name="status" v-model="form.status"
                                         class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option v-for="(label, status) in statuses" :value="status">{{ label }}</option>
+                                    <option v-for="(label, status) in statuses" :key="status" :value="status">{{ label }}</option>
                                 </select>
                                 <p v-if="form.errors.status" class="text-red-500 text-xs italic">{{ form.errors.status }}</p>
                             </div>

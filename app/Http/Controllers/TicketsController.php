@@ -15,10 +15,11 @@ class TicketsController extends Controller
      */
     public function index()
     {
+
         $tickets = Ticket::with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(config('table.default_per_page'));
-            
+
         return inertia('Tickets/Index', [
             'tickets' => $tickets,
         ]);
@@ -29,12 +30,19 @@ class TicketsController extends Controller
      */
     public function create()
     {
-        return inertia('Tickets/CreateTicket');
+        $statuses = TicketStatus::toSelectArray();
+        $priorities = TicketPriority::toSelectArray();
+
+        return inertia('Tickets/CreateTicket', [
+            'statuses' => $statuses,
+            'priorities' => $priorities
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(CreateTicketRequest $request)
     {
         $data = $request->validated();
