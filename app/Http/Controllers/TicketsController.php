@@ -29,13 +29,11 @@ class TicketsController extends Controller
                 return $query->whereDate('created_at', '<=', request('to_date'));
             })
             ->when(request('search') && !empty(request('search')), function ($query) {
-                return $query->where(function ($innerQuery) {
-                    $innerQuery->where('title', 'like', '%' . request('search') . '%')
-                               ->orWhereHas('user', function ($userQuery) {
-                                   $userQuery->where('name', 'like', '%' . request('search') . '%')
-                                             ->orWhere('email', 'like', '%' . request('search') . '%');
-                               });
-                });
+                return $query->whereHas('user', function ($userQuery) {
+                    $userQuery->where('name', 'like', '%' . request('search') . '%')
+                              ->orWhere('email', 'like', '%' . request('search') . '%');
+                })->orWhere('title', 'like', '%' . request('search') . '%');
+
             })
             ->orderBy('created_at', 'desc')
             ->paginate(config('table.default_per_page'));
