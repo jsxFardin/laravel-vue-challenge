@@ -18,11 +18,11 @@ function goToPage(page) {
 }
 </script>
 <template>
-    <div class="flex justify-between items-center mt-4">
+    <div class="flex justify-between items-center my-4">
         <button
             :disabled="currentPage === 1"
             @click="goToPage(currentPage - 1)"
-            class="bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 hover:bg-gray-700"
+            class="bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 hover:bg-indigo-700"
         >
             Previous
         </button>
@@ -30,16 +30,17 @@ function goToPage(page) {
             <li
                 v-for="page in totalPages"
                 :key="page"
-                class="py-2 px-4 leading-tight bg-gray-800 border border-gray-600 text-gray-400 hover:bg-gray-700 hover:text-white"
-                :class="{ 'bg-blue-600 text-white': page === currentPage }"
+                class="py-2 px-4 leading-tight border border-gray-600 text-gray-400 hover:bg-indigo-700 hover:text-white"
+                :class="[currentPage === page ? 'bg-indigo-600 text-white' : 'bg-gray-800']"
+                :disabled="currentPage === page"
             >
                 <a @click="goToPage(page)" class="cursor-pointer">{{ page }}</a>
             </li>
         </ul>
         <button
-            disabled="currentPage === totalPages"
+            :disabled="currentPage === totalPages"
             @click="goToPage(currentPage + 1)"
-            class="bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 hover:bg-gray-700"
+            class="bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 hover:bg-indigo-700"
         >
             Next
         </button>

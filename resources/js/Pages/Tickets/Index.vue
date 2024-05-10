@@ -1,7 +1,7 @@
 <script setup>
 import Pagination from "@/Components/Pagination.vue";
-import { computed, ref } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { watch, ref } from "vue";
+import { Link, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useDateUtils } from "@/Utilities/DateUtils";
 
@@ -10,15 +10,28 @@ const props = defineProps({
 });
 
 const { formatDateTime } = useDateUtils();
-
-const currentPage = ref(1);
-const perPage = ref(10);
-
-const paginatedTickets = computed(() => {
-  let start = (currentPage.value - 1) * perPage.value;
-  let end = start + perPage.value;
-  return props.tickets.slice(start, end);
+const ticketDataSet = ref([]);
+const queryParams = ref({
+  page: route().params.page ?? 1,
+  sort: route().params.sort ?? "desc",
+  name: route().params.name ?? "id",
+  per_page: route().params.per_page ?? 10,
 });
+
+watch(
+  () => props.tickets,
+  (value) => {
+    ticketDataSet.value = value.data;
+  },
+  { immediate: true }
+);
+
+const getTickets = (targetPage) => {
+    queryParams.value.page = targetPage
+    let url = route(`tickets.index`, queryParams.value);
+    // Inertia.get(url, queryParams.value, {  preserveState: true });
+    router.get(url, queryParams.value, {  preserveState: true });
+};
 </script>
 
 <template>
@@ -81,7 +94,7 @@ const paginatedTickets = computed(() => {
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-700">
-          <tr v-for="ticket in paginatedTickets" :key="ticket.id">
+          <tr v-for="ticket in ticketDataSet" :key="ticket.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
               {{ ticket.id }}
             </td>
@@ -107,10 +120,10 @@ const paginatedTickets = computed(() => {
         </tbody>
       </table>
       <Pagination
-        :total-items="tickets.length"
-        :current-page.sync="currentPage"
-        :per-page="perPage"
-        @update:currentPage="currentPage = $event"
+        :total-items="tickets.total"
+        :current-page="tickets.current_page"
+        :per-page="tickets.per_page"
+        @update:currentPage="getTickets"
       />
     </div>
   </AuthenticatedLayout>
