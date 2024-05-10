@@ -4,7 +4,7 @@ import { watch, ref } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useDateUtils } from "@/Utilities/DateUtils";
-
+import TicketFilter from "@/Pages/Tickets/TicketFilter.vue";
 const props = defineProps({
   tickets: Array,
   statuses: Array,
@@ -29,14 +29,23 @@ watch(
   { immediate: true }
 );
 
-const getTickets = (targetPage) => {
-  queryParams.value.page = targetPage;
-  let url = route(`tickets.index`, queryParams.value);
-  router.get(url, queryParams.value, { preserveState: true });
-};
-
 const getPriorityName = (priority) => props.priorities[priority];
 const getStatusName = (status) => props.statuses[status];
+
+const getTickets = () => {
+    let url = route(`tickets.index`, queryParams.value);
+    router.get(url, queryParams.value, { preserveState: true });
+}
+
+const changePage = (targetPage) => {
+  queryParams.value.page = targetPage;
+  getTickets();
+};
+
+const changeFilter = (filter) => {
+  queryParams.value = {...queryParams.value, ...filter};
+  getTickets();
+};
 </script>
 
 <template>
@@ -51,6 +60,7 @@ const getStatusName = (status) => props.statuses[status];
       </a>
     </div>
     <div class="overflow-x-auto shadow sm:rounded-lg">
+        <TicketFilter :priorities="priorities" :statuses="statuses" @changeFilter="changeFilter"/>
       <table class="min-w-full divide-y divide-gray-700">
         <thead class="">
           <tr>
@@ -128,9 +138,8 @@ const getStatusName = (status) => props.statuses[status];
         :total-items="tickets.total"
         :current-page="tickets.current_page"
         :per-page="tickets.per_page"
-        @update:currentPage="getTickets"
+        @update:currentPage="changePage"
       />
     </div>
   </AuthenticatedLayout>
 </template>
-

@@ -16,6 +16,27 @@ class TicketsController extends Controller
     public function index()
     {
         $tickets = Ticket::with('user')
+            ->when(request('status') && !empty(request('status')), function ($query) {
+                return $query->where('status', request('status'));
+            })
+            ->when(request('priority') && !empty(request('priority')), function ($query) {
+                return $query->where('priority', request('priority'));
+            })
+            ->when(request('from_date') && !empty(request('from_date')), function ($query) {
+                return $query->whereDate('created_at', '>=', request('from_date'));
+            })
+            ->when(request('to_date') && !empty(request('to_date')), function ($query) {
+                return $query->whereDate('created_at', '<=', request('to_date'));
+            })
+            ->when(request('search') && !empty(request('search')), function ($query) {
+                return $query->where(function ($innerQuery) {
+                    $innerQuery->where('title', 'like', '%' . request('search') . '%')
+                               ->orWhereHas('user', function ($userQuery) {
+                                   $userQuery->where('name', 'like', '%' . request('search') . '%')
+                                             ->orWhere('email', 'like', '%' . request('search') . '%');
+                               });
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(config('table.default_per_page'));
 

@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export function useDateUtils() {
-    function formatDate(date, format = 'MM/DD/YYYY') {
+    function formatDate(date, format = 'YYYY-MM-DD') {
         return moment(date).format(format);
     }
 
